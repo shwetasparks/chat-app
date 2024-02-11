@@ -1,124 +1,91 @@
-/*
-registers a new user by validating input, 
-checking for existing users, generating profile picture 
-URLs based on gender, saving the user to the database,
- and responding with user details or an error message.
-
-*/
+import bcrypt from 'bcryptjs';
 import User from '../models/user.model.js';
-import bcrypt from "bcryptjs";
-import generateTokenAndSetCookies from '../utils/generateToken.js';
+import generateTokenAndSetCookie from '../utils/generateToken.js';
 
-
-export const signup = async (req,res)=>{
-
+export const signup = async (req, res) => {
   try {
-    //destructure
-    const{ fullName,userName,password,confirmPassword,gender} =req.body;
+    const { fullName, username, password, confirmPassword, gender } = req.body;
 
-    //password matches
-    if(password!==confirmPassword){
-      return res.status(400).json({error:"password don't match"})
-    }
- 
-     // Check if a user with the provided userName already exists
-    const existingUser = await User.findOne({userName});
-
-    if(existingUser){
-      return res.status(400).json({error:"username already exists"});
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: "Passwords don't match" });
     }
 
-    //hash password
-    const salt= await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password,salt);
+    const user = await User.findOne({ username });
 
+    if (user) {
+      return res.status(400).json({ error: 'Username already exists' });
+    }
 
-    // https://avatar.iran.liara.run/
+    // HASH PASSWORD HERE
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
- // Generate profile picture URLs based on gender
-    const boyProfilePic=`https://avatar.iran.liara.run/public/boy?username=${userName}`
-    const girlProfilePic=`https://avatar.iran.liara.run/public/girl?username=${userName}`
+    // https://avatar-placeholder.iran.liara.run/
 
+    const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
+    const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
 
-// Create a new user object
-const newUser = new User({
-  fullName,
-  userName,
-  password:hashedPassword,
-  gender,
-  profilePic:gender === "male" ? boyProfilePic : girlProfilePic 
-});
+    const newUser = new User({
+      fullName,
+      username,
+      password: hashedPassword,
+      gender,
+      profilePic: gender === 'male' ? boyProfilePic : girlProfilePic,
+    });
 
-  // Save the new user to the database
-if(newUser){
-  //generate jwt token for the new user and save it in cookie
- generateTokenAndSetCookies (newUser._id,res);
-  await newUser.save();
+    if (newUser) {
+      // Generate JWT token here
+      generateTokenAndSetCookie(newUser._id, res);
+      await newUser.save();
 
-  res.status(201).json({
-    _id: newUser._id,
-    fullName:newUser.fullName,
-    userName:newUser.userName,
-    profilePic:newUser.profilePic,
-    gender,
-    password:hashedPassword,
-  
-  })
-}
-else{
-  res.status(400).json({error:"invalid user data"})
-}
- 
+      res.status(201).json({
+        _id: newUser._id,
+        fullName: newUser.fullName,
+        username: newUser.username,
+        profilePic: newUser.profilePic,
+      });
+    } else {
+      res.status(400).json({ error: 'Invalid user data' });
+    }
   } catch (error) {
-    console.log("Error in signup", error.message);
-    res.status(500).json({
-      error:"internal server error here"
-    })
+    console.log('Error in signup controller', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-/************************************************************************************** */
-
-
-//signup
-export const login = async (req,res)=>{
+export const login = async (req, res) => {
   try {
-    const {userName,password}= req.body;
-    const user= await User.findOne({userName});
-    const isPasswordCorrect= await bcrypt.compare(password,user?.password||"");
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      user?.password || ''
+    );
 
-    if(!user||isPasswordCorrect){
-      return res.status(400).json({error:"invalid username or password"})
+    if (!user || !isPasswordCorrect) {
+      return res.status(400).json({ error: 'Invalid username or password' });
     }
-generateTokenAndSetCookies(user._id,res);
-res.status(200).json({
-  _id: user._id,
-  fullName:user.fullName,
-  userName:user.userName,
-  profilePic:user.profilePic,
-});
 
+    generateTokenAndSetCookie(user._id, res);
+
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      username: user.username,
+      profilePic: user.profilePic,
+    });
   } catch (error) {
-    console.log("Error in signup", error.message);
-    res.status(500).json({
-      error:"internal server error here"
-    })
+    console.log('Error in login controller', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-             
 
-
-//logout
-export const logout = (req,res)=>{
+export const logout = (req, res) => {
   try {
-    res.cookie("jwt","",{maxAge:0})
-    res.status(200).json({message:"logged out successfully"})
-    
+    res.cookie('jwt', '', { maxAge: 0 });
+    res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
-    console.log("Error in logout", error.message);
-    res.status(500).json({
-      error:"internal server error here"
-    })
-    
+    console.log('Error in logout controller', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };

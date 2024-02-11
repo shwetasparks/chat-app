@@ -1,20 +1,11 @@
-const MessageSkeleton = () => {
-  return (
-    <>
-      <div className="flex gap-3 items-center">
-        <div className="skeleton w-10 h-10 rounded-full shrink-0"></div>
-        <div className="flex flex-col gap-1">
-          <div className="skeleton h-4 w-40"></div>
-          <div className="skeleton h-4 w-40"></div>
-        </div>
-      </div>
-      <div className="flex gap-3 items-center justify-end">
-        <div className="flex flex-col gap-1">
-          <div className="skeleton h-4 w-40"></div>
-        </div>
-        <div className="skeleton w-10 h-10 rounded-full shrink-0"></div>
-      </div>
-    </>
-  );
-};
-export default MessageSkeleton;
+export function extractTime(dateString) {
+  const date = new Date(dateString);
+  const hours = padZero(date.getHours());
+  const minutes = padZero(date.getMinutes());
+  return `${hours}:${minutes}`;
+}
+
+// Helper function to pad single-digit numbers with a leading zero
+function padZero(number) {
+  return number.toString().padStart(2, '0');
+}
