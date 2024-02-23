@@ -1,12 +1,13 @@
 import { useSocketContext } from '../../context/SocketContext';
 import useConversation from '../../zustand/useConversation';
+import PropTypes from 'prop-types';
 
 const Conversation = ({ conversation, lastIdx, emoji }) => {
-  const { selectedConversation, setSelectedConversation } = useConversation();
 
-  const isSelected = selectedConversation?._id === conversation._id;
+  const { selectedConversation, setSelectedConversation } = useConversation();
+  const isSelected = selectedConversation?._id === conversation._id
   const { onlineUsers } = useSocketContext();
-  const isOnline = onlineUsers.includes(conversation._id);
+  const isOnline = onlineUsers.includes(conversation._id)
 
   return (
     <>
@@ -34,4 +35,10 @@ const Conversation = ({ conversation, lastIdx, emoji }) => {
     </>
   );
 };
+Conversation.propTypes = {
+  conversation: PropTypes.object.isRequired,
+  lastIdx: PropTypes.bool, 
+  emoji: PropTypes.string.isRequired,
+};
+
 export default Conversation;

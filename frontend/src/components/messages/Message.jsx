@@ -1,7 +1,8 @@
+
+import PropTypes from 'prop-types';
 import { useAuthContext } from '../../context/AuthContext';
 import { extractTime } from '../../utils/extractTime';
 import useConversation from '../../zustand/useConversation';
-
 
 const Message = ({ message }) => {
   const { authUser } = useAuthContext();
@@ -20,7 +21,7 @@ const Message = ({ message }) => {
     <div className={`chat ${chatClassName}`}>
       <div className="chat-image avatar">
         <div className="w-10 rounded-full">
-          <img alt="Tailwind CSS chat bubble component" src={profilePic} />
+          <img alt="Profile" src={profilePic} />
         </div>
       </div>
       <div
@@ -34,4 +35,15 @@ const Message = ({ message }) => {
     </div>
   );
 };
+
+Message.propTypes = {
+  message: PropTypes.shape({
+    senderId: PropTypes.string.isRequired,
+    createdAt: PropTypes.string.isRequired,
+    shouldShake: PropTypes.bool.isRequired,
+    message: PropTypes.string.isRequired,
+    // Add any other properties your 'message' object should have
+  }).isRequired,
+};
+
 export default Message;
