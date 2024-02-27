@@ -1,26 +1,35 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const messageSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
-    senderId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    receiverId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    message: {
+    fullName: {
       type: String,
       required: true,
     },
-    // createdAt, updatedAt
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
+    gender: {
+      type: String,
+      required: true,
+      enum: ["male", "female"],
+    },
+    profilePic: {
+      type: String,
+      default: "",
+    },
+    // createdAt, updatedAt => Member since <createdAt>
   },
   { timestamps: true }
 );
 
-const Message = mongoose.model('Message', messageSchema);
+const ChatUser = mongoose.model("User", userSchema);
 
-export default Message;
+export default ChatUser;

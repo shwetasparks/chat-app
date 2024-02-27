@@ -1,27 +1,29 @@
-import mongoose from 'mongoose';
-
-const userSchema = new mongoose.Schema({
-  fullName: {
-    type: String,
-    required: true,
+import mongoose from "mongoose";
+const userSchema = new mongoose.Schema(
+  {
+    fullName: {
+      type: String,
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      minLength: 6,
+    },
+    gender: {
+      type: String,
+      required: true,
+      enum: ["male", "female"],
+    },
+    profilePic: {
+      type: String,
+      default: "",
+    },
   },
-  username: {
-    type: String,
-    required: true,
-    minLength: 6,
-  },
-  gender: {
-    type: String,
-    required: true,
-    enum: ["male", "female"],
-  },
-  profilePic: {
-    type: String,  // Corrected from `typeof:String`
-    default: "",
+  {
+    timestamps: true,
   }
-},{
-  timestamp:true
-});
+);
 
-const User = mongoose.model("User", userSchema);
-export default User;
+const User = mongoose.model("Usermodel", userSchema);
+export default User
