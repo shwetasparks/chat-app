@@ -1,7 +1,5 @@
-
 import { createContext, useState, useEffect, useContext } from "react";
-import PropTypes from "prop-types";
-import { useAuthContext } from "./AuthContext.jsx";
+import { useAuthContext } from "./AuthContext";
 import io from "socket.io-client";
 
 const SocketContext = createContext();
@@ -11,13 +9,13 @@ export const useSocketContext = () => {
 };
 
 export const SocketContextProvider = ({ children }) => {
-  const { authUser } = useAuthContext();
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const { authUser } = useAuthContext();
 
   useEffect(() => {
     if (authUser) {
-      const socket = io("https://localhost:3000", {
+      const socket = io("https//localhost:5000", {
         query: {
           userId: authUser._id,
         },
@@ -25,7 +23,7 @@ export const SocketContextProvider = ({ children }) => {
 
       setSocket(socket);
 
-      // socket.on() is used to listen to the events. can be used both on the client and server side
+      // socket.on() is used to listen to the events. can be used both on client and server side
       socket.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
       });
@@ -45,10 +43,3 @@ export const SocketContextProvider = ({ children }) => {
     </SocketContext.Provider>
   );
 };
-
-// Add PropTypes validation for children
-SocketContextProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
-export default SocketContextProvider;
