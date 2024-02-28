@@ -1,15 +1,15 @@
-import { Link } from 'react-router-dom';
-import GenderCheckbox from './GenderCheckbox';
-import { useState } from 'react';
-import useSignup from '../../hooks/useSignup';
+import { Link } from "react-router-dom";
+import GenderCheckbox from "./GenderCheckbox";
+import { useState } from "react";
+import useSignup from "../../hooks/useSignup";
 
 const SignUp = () => {
   const [inputs, setInputs] = useState({
-    fullName: '',
-    username: '',
-    password: '',
-    confirmPassword: '',
-    gender: '',
+    fullName: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    gender: "",
   });
 
   const { loading, signup } = useSignup();
@@ -97,7 +97,7 @@ const SignUp = () => {
           />
 
           <Link
-            to={'/login'}
+            to={"/login"}
             className="text-sm hover:underline hover:text-blue-600 mt-2 inline-block"
             href="#"
           >
@@ -112,7 +112,7 @@ const SignUp = () => {
               {loading ? (
                 <span className="loading loading-spinner"></span>
               ) : (
-                'Sign Up'
+                "Sign Up"
               )}
             </button>
           </div>
